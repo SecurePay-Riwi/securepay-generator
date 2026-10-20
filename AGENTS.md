@@ -62,3 +62,15 @@ stop and ask instead of working around it.
   If a change alters that number, it changes the data every other piece uses.
 - Balances are kept in memory; the generator does not write to PostgreSQL.
 - securepay-csv reads `generated/instance-*/events.jsonl`; keep that format.
+
+## Where to read more
+
+Read these before changing the design, not to work on the code:
+
+- Architecture overview: https://securepay-riwi.github.io/SecurePay/docs/architecture/overview
+- Decisions (ADRs): https://securepay-riwi.github.io/SecurePay/docs/architecture/decisions
+- Team decisions: https://securepay-riwi.github.io/SecurePay/docs/architecture/team-decisions
+- Open questions: https://securepay-riwi.github.io/SecurePay/docs/architecture/open-questions
+- Data flow: https://securepay-riwi.github.io/SecurePay/docs/architecture/data-flow
+- Logbook: https://securepay-riwi.github.io/SecurePay/docs/logbook
+- This component: https://securepay-riwi.github.io/SecurePay/docs/components/generator
