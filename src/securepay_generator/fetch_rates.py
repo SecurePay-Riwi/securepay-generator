@@ -2,7 +2,7 @@
 
 Se corre una sola vez y el archivo resultante se sube al repo:
 
-    uv run python -m generators.fetch_rates
+    uv run python -m securepay_generator.fetch_rates
 
 Así el generador no depende de internet en cada corrida y todas las
 corridas usan exactamente las mismas tasas.
@@ -11,7 +11,7 @@ corridas usan exactamente las mismas tasas.
 import json
 import urllib.request
 
-from generators.config import FECHA_REFERENCIA, TASAS_FILE
+from securepay_generator.config import FECHA_REFERENCIA, TASAS_FILE
 
 # La versión 2 trae COP; la versión 1 no.
 URL = "https://api.frankfurter.dev/v2/rates"

@@ -2,7 +2,7 @@ import uuid
 from collections import namedtuple
 from decimal import Decimal
 
-from generators.catalog import elegir_cuentas, es_de_instancia
+from securepay_generator.catalog import elegir_cuentas, es_de_instancia
 
 Fila = namedtuple("Fila", "id user_id moneda saldo en_lista compartida")
 

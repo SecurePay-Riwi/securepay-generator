@@ -11,12 +11,12 @@ from decimal import Decimal
 
 import pytest
 
-from generators.catalog import Catalogo, Cuenta
-from generators.core import Core
-from generators.defects import Defectos
-from generators.money import cargar_tasas, redondear
-from generators.patterns import CICLO
-from shared.config import FECHA_REFERENCIA
+from securepay_generator.catalog import Catalogo, Cuenta
+from securepay_generator.core import Core
+from securepay_generator.defects import Defectos
+from securepay_generator.money import cargar_tasas, redondear
+from securepay_generator.patterns import CICLO
+from securepay_shared.config import FECHA_REFERENCIA
 
 NAMESPACE = uuid.UUID("12345678-1234-5678-1234-567812345678")
 

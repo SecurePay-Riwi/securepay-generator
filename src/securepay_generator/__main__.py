@@ -1,6 +1,6 @@
 """Punto de entrada del generador de transacciones.
 
-    uv run python -m generators
+    uv run python -m securepay_generator
 
 Lee la base una vez, genera el tráfico con fraude y defectos, y lo manda
 al motor (GEN_OUTPUT=http) o lo escribe en un archivo (GEN_OUTPUT=file).
@@ -8,14 +8,14 @@ En los dos modos queda generated/instance-N/events.jsonl, que es de donde
 leen los extractos de los socios.
 """
 
-from generators import config
-from generators.catalog import cargar
-from generators.core import Core
-from generators.defects import Defectos
-from generators.money import cargar_tasas
-from generators.patterns import CICLO
-from generators.sender import Reporte, SalidaArchivo, SalidaHttp, carpeta_de_salida
-from shared.db import engine
+from securepay_generator import config
+from securepay_generator.catalog import cargar
+from securepay_generator.core import Core
+from securepay_generator.defects import Defectos
+from securepay_generator.money import cargar_tasas
+from securepay_generator.patterns import CICLO
+from securepay_generator.sender import Reporte, SalidaArchivo, SalidaHttp, carpeta_de_salida
+from securepay_shared.db import engine
 
 
 def main():

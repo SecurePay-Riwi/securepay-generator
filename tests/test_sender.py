@@ -1,6 +1,6 @@
 import json
 
-from generators.sender import Reporte, SalidaArchivo, carpeta_de_salida
+from securepay_generator.sender import Reporte, SalidaArchivo, carpeta_de_salida
 
 
 def test_archivo_y_reporte(generar, tmp_path):
