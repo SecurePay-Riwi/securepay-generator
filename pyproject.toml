@@ -1,0 +1,20 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "securepay-generator"
+version = "0.1.0"
+description = "Synthetic transaction and entity generator for SecurePay (F3)"
+requires-python = ">=3.12"
+dependencies = [
+    "securepay-shared>=0.1.0",
+    "faker>=40.43.0",
+    "httpx>=0.28.1",
+    "python-dotenv>=1.2.4",
+    "boto3>=1.43.113",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["generator"]
