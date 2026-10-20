@@ -3,8 +3,8 @@
 import json
 from decimal import ROUND_HALF_UP, Decimal
 
-from generators.config import TASAS_FILE
-from shared.config import MONEDA_DECIMALES
+from securepay_generator.config import TASAS_FILE
+from securepay_shared.config import MONEDA_DECIMALES
 
 
 def cargar_tasas(ruta=TASAS_FILE):

@@ -14,8 +14,8 @@ import uuid
 from dataclasses import dataclass
 from datetime import timedelta
 
-from generators import config
-from generators.money import desde_usd, redondear
+from securepay_generator import config
+from securepay_generator.money import desde_usd, redondear
 
 NAMESPACE = uuid.UUID("12345678-1234-5678-1234-567812345678")
 

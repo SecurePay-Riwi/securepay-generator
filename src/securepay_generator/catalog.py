@@ -11,7 +11,7 @@ from decimal import Decimal
 
 from sqlalchemy import text
 
-from generators.money import redondear
+from securepay_generator.money import redondear
 
 
 @dataclass

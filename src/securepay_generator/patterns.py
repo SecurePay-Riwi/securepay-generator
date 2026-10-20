@@ -13,9 +13,9 @@ import uuid
 from datetime import timedelta
 from decimal import Decimal
 
-from generators import config
-from generators.core import NAMESPACE, etiqueta
-from generators.money import a_usd, desde_usd, redondear
+from securepay_generator import config
+from securepay_generator.core import NAMESPACE, etiqueta
+from securepay_generator.money import a_usd, desde_usd, redondear
 
 
 def elegir_varias(core, cuentas, n, excluir=(), saldo_min_usd=0):

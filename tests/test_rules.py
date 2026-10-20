@@ -12,8 +12,8 @@ from decimal import Decimal
 
 import pytest
 
-from generators import config
-from generators.money import a_usd
+from securepay_generator import config
+from securepay_generator.money import a_usd
 
 R = config.REGLAS
 

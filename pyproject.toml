@@ -1,20 +1,28 @@
+[project]
+name = "securepay-generator"
+version = "0.1.0"
+description = "Simulated wallet core that streams transactions with labeled fraud patterns for SecurePay"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "securepay-shared>=0.1.0",
+    "httpx>=0.28.1",
+    "python-dotenv>=1.2.4",
+    "sqlalchemy>=2.1.4",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[project]
-name = "securepay-generator"
-version = "0.1.0"
-description = "Synthetic transaction and entity generator for SecurePay (F3)"
-requires-python = ">=3.12"
-dependencies = [
-    "securepay-shared>=0.1.0",
-    "faker>=40.43.0",
-    "httpx>=0.28.1",
-    "python-dotenv>=1.2.4",
-    "boto3>=1.43.113",
-]
+[tool.hatch.build.targets.wheel]
+packages = ["src/securepay_generator"]
 
 [tool.pytest.ini_options]
-pythonpath = ["."]
-testpaths = ["generator"]
+testpaths = ["tests"]
+addopts = ["--import-mode=importlib"]

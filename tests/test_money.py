@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from generators.money import a_usd, desde_usd, redondear
+from securepay_generator.money import a_usd, desde_usd, redondear
 
 
 def test_redondear_respeta_los_decimales_de_cada_moneda():
