@@ -13,7 +13,7 @@ from decimal import Decimal
 import pytest
 
 from securepay_generator import config
-from securepay_generator.money import a_usd
+from securepay_generator.money import Tasas, a_usd
 
 R = config.REGLAS
 
@@ -35,7 +35,7 @@ def reglas_que_dispara(eventos, tasas, en_lista):
         t = datetime.fromisoformat(p["transaction_date"])
         origen, destino = p["source_account_id"], p["destination_account_id"]
         monto = Decimal(p["amount"])
-        usd = a_usd(monto, p["currency"], tasas)
+        usd = a_usd(monto, p["currency"], tasas.del_dia(t))
         reglas = set()
 
         if origen:
@@ -102,3 +102,39 @@ def test_los_controles_existen_y_no_son_fraude(generar):
         "VELOCITY_CONTROL", "MULE_CONTROL", "SPLITTING_CONTROL", "ACCOUNT_TAKEOVER_CONTROL"
     }
     assert not any(e.etiqueta["is_fraud"] or e.etiqueta["expected_rule"] for e in controles)
+
+
+def tasas_que_cambian_cada_dia(dias=60):
+    """Tasas que suben y bajan 5 % de un día hábil al siguiente.
+
+    Mucho más que lo normal: si cada monto no usara la tasa de su propia
+    fecha, el fraccionamiento (que pasa el límite por 2 % a 17 %) quedaría
+    del lado equivocado del umbral.
+    """
+    base = {"USD": Decimal(1), "COP": Decimal("3300"), "EUR": Decimal("0.88"), "JPY": Decimal("158")}
+    por_fecha = {}
+    inicio = datetime(2026, 10, 1)
+    for i in range(dias):
+        dia = inicio + timedelta(days=i)
+        if dia.weekday() >= 5:  # sábado y domingo no se publica
+            continue
+        factor = Decimal("1.05") if i % 2 else Decimal("0.95")
+        por_fecha[dia.date().isoformat()] = {
+            m: (t if m == "USD" else t * factor) for m, t in base.items()
+        }
+    return Tasas(por_fecha)
+
+
+def test_con_tasas_que_cambian_cada_dia_las_reglas_siguen_exactas(generar, en_lista):
+    tasas = tasas_que_cambian_cada_dia()
+    eventos, _ = generar(cantidad=2_000, fraude=20, con_tasas=tasas)
+
+    fechas = {datetime.fromisoformat(e.payload["transaction_date"]).date()
+              for e in eventos if e.tipo == "transaction"}
+    assert len(fechas) > 3  # la corrida cruza varios días y tasas
+
+    for e, reglas in reglas_que_dispara(eventos, tasas, en_lista):
+        esperada = e.etiqueta["expected_rule"]
+        if esperada == "dispositivo_compartido":
+            esperada = None
+        assert reglas == ({esperada} if esperada else set()), e.etiqueta
