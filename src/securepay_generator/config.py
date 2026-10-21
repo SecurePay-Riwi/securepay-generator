@@ -107,9 +107,11 @@ REGLAS = {
 
 # --- Tasas de cambio -------------------------------------------------------
 
-# Tasas de Frankfurter de la fecha de referencia, consultadas una vez y
-# guardadas en el repo para que todas las corridas den lo mismo.
-TASAS_FILE = Path(__file__).parent / "data" / "tasas_2026-10-01.json"
+# Tasas de Frankfurter de cada día publicado desde la fecha de referencia,
+# guardadas en el repo para que todas las corridas den lo mismo. Cada
+# transacción se convierte con la tasa de su fecha. Se actualiza con
+# `uv run python -m securepay_generator.fetch_rates` cuando haya más días.
+TASAS_FILE = Path(__file__).parent / "data" / "tasas_2026-10.json"
 
 
 def validar():

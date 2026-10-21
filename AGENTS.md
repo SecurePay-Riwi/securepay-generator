@@ -19,6 +19,7 @@ Run everything from the repository root.
 uv sync                 # install (Python 3.12, securepay-shared from PyPI)
 uv run pytest           # tests; they need no database, internet or LocalStack
 uv run python -m securepay_generator                 # needs the seed loaded
+uv run python -m securepay_generator.fetch_rates     # refresh the rates file; needs internet
 ```
 
 ## Structure rules (mandatory)
@@ -58,9 +59,13 @@ stop and ask instead of working around it.
 
 ## Known traps
 
-- With `SEED=42` and default settings the run must print `Listo: 1035 eventos`.
+- With `SEED=42` and default settings the run must print `Listo: 1036 eventos`.
   If a change alters that number, it changes the data every other piece uses.
 - Balances are kept in memory; the generator does not write to PostgreSQL.
+- `src/securepay_generator/data/tasas_2026-10.json` is the one committed data
+  file (rule 6 is about generated output): every run must use the same rates.
+  Each amount is converted with the rate of its transaction date
+  (`money.Tasas.del_dia`), never with the rate of the day a pattern starts.
 - securepay-csv reads `generated/instance-*/events.jsonl`; keep that format.
 
 ## Where to read more

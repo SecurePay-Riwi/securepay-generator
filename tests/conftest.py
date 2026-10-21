@@ -70,8 +70,10 @@ def generar(tasas):
     saldos de las cuentas.
     """
 
-    def _generar(cantidad=1_000, fraude=5, defectos=(0, 0, 0), semilla=42):
-        core = Core(catalogo_falso(), tasas, cantidad, fraude, semilla, FECHA_REFERENCIA)
+    def _generar(cantidad=1_000, fraude=5, defectos=(0, 0, 0), semilla=42, con_tasas=None):
+        core = Core(
+            catalogo_falso(), con_tasas or tasas, cantidad, fraude, semilla, FECHA_REFERENCIA
+        )
         core.patrones = CICLO
         d = Defectos(semilla, *defectos)
         return list(d.aplicar(core.eventos())), d

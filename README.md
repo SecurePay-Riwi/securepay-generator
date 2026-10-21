@@ -18,7 +18,7 @@ pattern per antifraud rule, each with its control case:
 | `SPLITTING` | 3 or more transactions under the daily limit that together exceed it |
 
 It also injects three defects: resends, out-of-order events and extra decimals.
-With seed 42 and default settings it prints `Listo: 1035 eventos`.
+With seed 42 and default settings it prints `Listo: 1036 eventos`.
 
 ## Setup
 
@@ -30,6 +30,26 @@ uv sync                # installs securepay-shared from PyPI
 ```
 
 The seed must have run first (**securepay-seed**).
+
+## Exchange rates
+
+Accounts hold COP, USD, EUR or JPY, while amounts and rule thresholds are
+thought in USD. The generator converts **each amount with the Frankfurter rate
+of its own transaction date**, from `src/securepay_generator/data/tasas_2026-10.json`
+(one entry per published day since the reference date, 2026-10-01; Frankfurter
+blends several providers and usually publishes every day, weekends included).
+A day without a rate, or not published yet, uses the last earlier one, the
+same way the decision engine reads the DynamoDB table.
+
+The file is committed on purpose, so every run gives the same data without
+internet. To add the days published since the last update:
+
+```bash
+uv run python -m securepay_generator.fetch_rates   # needs internet
+```
+
+Then commit the updated file. New rates change the amounts of the days they
+cover, so do it on purpose, not on every run.
 
 ## Local services
 
@@ -84,8 +104,8 @@ src/securepay_generator/
 ├── defects.py      # resends, out-of-order, extra decimals
 ├── money.py        # currency conversion and rounding
 ├── sender.py       # file or HTTP output
-├── fetch_rates.py  # refreshes data/tasas_*.json
-└── data/           # fixed exchange rates used by the generator
+├── fetch_rates.py  # refreshes data/tasas_2026-10.json
+└── data/           # exchange rates per day, versioned on purpose
 tests/
 ```
 

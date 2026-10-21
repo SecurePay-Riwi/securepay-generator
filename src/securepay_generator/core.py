@@ -54,6 +54,7 @@ class Core:
         self.rng = random.Random(f"{semilla}:{instancia}")
         self.semilla = semilla
         self.instancia = instancia
+        # money.Tasas: cada monto se convierte con la tasa de su fecha.
         self.tasas = tasas
         self.cantidad = cantidad
         self.fraud_pct = fraud_pct
@@ -201,7 +202,7 @@ class Core:
         monto = desde_usd(
             self.rng.uniform(config.MONTO_NORMAL_USD["min"], config.MONTO_NORMAL_USD["max"]),
             cuenta.moneda,
-            self.tasas,
+            self.tasas.del_dia(self.reloj),
         )
 
         destino = None
@@ -226,7 +227,7 @@ class Core:
                     config.MONTO_RECARGA_USD["min"], config.MONTO_RECARGA_USD["max"]
                 ),
                 cuenta.moneda,
-                self.tasas,
+                self.tasas.del_dia(self.reloj),
             )
             return self.transaccion(tipo, monto, self.reloj, destino=cuenta, etiq=etiq)
 
