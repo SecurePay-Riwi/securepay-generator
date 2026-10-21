@@ -93,16 +93,16 @@ MONTO_RECARGA_USD = {"min": 10, "max": 300}
 # pasarlos y sus casos de control para quedarse justo por debajo.
 REGLAS = {
     # Más de 5 transferencias salientes en 10 minutos desde la misma cuenta.
-    "velocidad": {"transferencias": 5, "minutos": 10},
+    "velocity": {"transferencias": 5, "minutos": 10},
     # Recibe de 3 o más remitentes distintos y retira el 80 % o más del
     # saldo en menos de 30 minutos.
-    "mula": {"remitentes": 3, "retiro_pct": 80, "minutos": 30},
+    "mule": {"remitentes": 3, "retiro_pct": 80, "minutos": 30},
     # 3 o más transacciones en 24 h, cada una bajo el límite diario de
     # reporte y que juntas lo pasan. USD 10.000 es el parámetro inicial.
-    "fraccionamiento": {"transacciones": 3, "horas": 24, "limite_usd": 10_000},
+    "splitting": {"transacciones": 3, "horas": 24, "limite_usd": 10_000},
     # Cambio de dispositivo + cambio de contraseña + transacción de más de
     # USD 200, todo en menos de 1 hora.
-    "toma_cuenta": {"monto_usd": 200, "minutos": 60},
+    "account_takeover": {"monto_usd": 200, "minutos": 60},
 }
 
 # --- Tasas de cambio -------------------------------------------------------

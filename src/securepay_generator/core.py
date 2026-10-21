@@ -219,7 +219,7 @@ class Core:
         # la regla del dispositivo compartido debería subirles el riesgo.
         etiq = etiqueta()
         if cuenta.compartida:
-            etiq = etiqueta("SHARED_DEVICE", regla="dispositivo_compartido")
+            etiq = etiqueta("SHARED_DEVICE", regla="shared_device")
 
         if tipo == "RECARGA":
             monto = desde_usd(
