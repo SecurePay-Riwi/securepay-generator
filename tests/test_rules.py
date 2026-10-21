@@ -41,37 +41,37 @@ def reglas_que_dispara(eventos, tasas, en_lista):
         if origen:
             salientes[origen].append((t, p["type"], usd))
 
-            ventana = timedelta(minutes=R["velocidad"]["minutos"])
+            ventana = timedelta(minutes=R["velocity"]["minutos"])
             p2p = [x for x, tipo, _ in salientes[origen] if tipo == "P2P" and t - x < ventana]
-            if p["type"] == "P2P" and len(p2p) > R["velocidad"]["transferencias"]:
-                reglas.add("velocidad")
+            if p["type"] == "P2P" and len(p2p) > R["velocity"]["transferencias"]:
+                reglas.add("velocity")
 
             if p["type"] == "RETIRO":
-                ventana = timedelta(minutes=R["mula"]["minutos"])
+                ventana = timedelta(minutes=R["mule"]["minutos"])
                 remitentes = {r for x, r in entrantes[origen] if t - x < ventana}
-                minimo = Decimal(R["mula"]["retiro_pct"]) / 100 * Decimal(p["source_balance_before"])
-                if len(remitentes) >= R["mula"]["remitentes"] and monto >= minimo:
-                    reglas.add("mula")
+                minimo = Decimal(R["mule"]["retiro_pct"]) / 100 * Decimal(p["source_balance_before"])
+                if len(remitentes) >= R["mule"]["remitentes"] and monto >= minimo:
+                    reglas.add("mule")
 
-            limite = R["fraccionamiento"]["limite_usd"]
-            ventana = timedelta(hours=R["fraccionamiento"]["horas"])
+            limite = R["splitting"]["limite_usd"]
+            ventana = timedelta(hours=R["splitting"]["horas"])
             dia = [u for x, _, u in salientes[origen] if t - x < ventana]
             if (
-                len(dia) >= R["fraccionamiento"]["transacciones"]
+                len(dia) >= R["splitting"]["transacciones"]
                 and all(u < limite for u in dia)
                 and sum(dia) > limite
             ):
-                reglas.add("fraccionamiento")
+                reglas.add("splitting")
 
-            ventana = timedelta(minutes=R["toma_cuenta"]["minutos"])
+            ventana = timedelta(minutes=R["account_takeover"]["minutos"])
             recientes = {tipo for x, tipo in seguridad[origen] if timedelta(0) <= t - x < ventana}
-            if usd > R["toma_cuenta"]["monto_usd"] and recientes >= {"DEVICE_CHANGE", "PASSWORD_CHANGE"}:
-                reglas.add("toma_cuenta")
+            if usd > R["account_takeover"]["monto_usd"] and recientes >= {"DEVICE_CHANGE", "PASSWORD_CHANGE"}:
+                reglas.add("account_takeover")
 
         if origen and destino:
             entrantes[destino].append((t, origen))
         if origen in en_lista or destino in en_lista:
-            reglas.add("lista_restrictiva")
+            reglas.add("restricted_list")
 
         resultado.append((e, reglas))
     return resultado
@@ -85,13 +85,13 @@ def test_cada_evento_dispara_solo_la_regla_de_su_etiqueta(generar, tasas, en_lis
     for e, reglas in reglas_que_dispara(eventos, tasas, en_lista):
         esperada = e.etiqueta["expected_rule"]
         # El dispositivo compartido sale del seed, no de la transacción.
-        if esperada == "dispositivo_compartido":
+        if esperada == "shared_device":
             esperada = None
         assert reglas == ({esperada} if esperada else set()), e.etiqueta
         disparadas.update(reglas)
 
     # En 2.000 transacciones aparecen todos los patrones.
-    assert set(disparadas) == {"velocidad", "mula", "fraccionamiento", "toma_cuenta", "lista_restrictiva"}
+    assert set(disparadas) == {"velocity", "mule", "splitting", "account_takeover", "restricted_list"}
 
 
 def test_los_controles_existen_y_no_son_fraude(generar):
@@ -135,6 +135,6 @@ def test_con_tasas_que_cambian_cada_dia_las_reglas_siguen_exactas(generar, en_li
 
     for e, reglas in reglas_que_dispara(eventos, tasas, en_lista):
         esperada = e.etiqueta["expected_rule"]
-        if esperada == "dispositivo_compartido":
+        if esperada == "shared_device":
             esperada = None
         assert reglas == ({esperada} if esperada else set()), e.etiqueta

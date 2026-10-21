@@ -47,7 +47,7 @@ class Velocidad:
     """
 
     nombre = "VELOCITY"
-    regla = config.REGLAS["velocidad"]
+    regla = config.REGLAS["velocity"]
     max_tx = regla["transferencias"] + 2  # transferencias + posible recarga
 
     def iniciar(self, core, fraude):
@@ -94,7 +94,7 @@ class Velocidad:
                 fecha_tx,
                 lambda fecha, d=destino, m=monto, x=dispara: core.transaccion(
                     "P2P", m, fecha, origen=origen, destino=d,
-                    etiq=etiqueta(nombre, inst, fraude, "velocidad" if x else None),
+                    etiq=etiqueta(nombre, inst, fraude, "velocity" if x else None),
                 ),
             )
             agendadas += 1
@@ -111,7 +111,7 @@ class Mula:
     """
 
     nombre = "MULE"
-    regla = config.REGLAS["mula"]
+    regla = config.REGLAS["mule"]
     max_tx = regla["remitentes"] + 1
 
     def iniciar(self, core, fraude):
@@ -152,7 +152,7 @@ class Mula:
             lambda fecha: core.transaccion(
                 "RETIRO", redondear(mula.saldo * retiro_pct, mula.moneda), fecha,
                 origen=mula,
-                etiq=etiqueta(nombre, inst, fraude, "mula" if fraude else None),
+                etiq=etiqueta(nombre, inst, fraude, "mule" if fraude else None),
             ),
         )
         return k + 1
@@ -167,7 +167,7 @@ class Fraccionamiento:
     """
 
     nombre = "SPLITTING"
-    regla = config.REGLAS["fraccionamiento"]
+    regla = config.REGLAS["splitting"]
     max_tx = regla["transacciones"] + 1
 
     def iniciar(self, core, fraude):
@@ -209,7 +209,7 @@ class Fraccionamiento:
                 fecha_tx,
                 lambda fecha, m=monto, x=dispara: core.transaccion(
                     "RETIRO", m, fecha, origen=cuenta,
-                    etiq=etiqueta(nombre, inst, fraude, "fraccionamiento" if x else None),
+                    etiq=etiqueta(nombre, inst, fraude, "splitting" if x else None),
                 ),
             )
         return n + 1
@@ -224,7 +224,7 @@ class TomaCuenta:
     """
 
     nombre = "ACCOUNT_TAKEOVER"
-    regla = config.REGLAS["toma_cuenta"]
+    regla = config.REGLAS["account_takeover"]
     max_tx = 2  # recarga posible + la transacción
 
     def iniciar(self, core, fraude):
@@ -276,7 +276,7 @@ class TomaCuenta:
             cambio + espera,
             lambda fecha: core.transaccion(
                 "RETIRO", monto, fecha, origen=cuenta, dispositivo=nuevo,
-                etiq=etiqueta(nombre, inst, fraude, "toma_cuenta" if fraude else None),
+                etiq=etiqueta(nombre, inst, fraude, "account_takeover" if fraude else None),
             ),
         )
         return agendadas + 1
@@ -301,7 +301,7 @@ class ListaRestrictiva:
         inst = core.nueva_instancia(self.nombre)
         fecha = core.reloj + timedelta(minutes=1)
         monto = usd(core, 20, 100, cuenta.moneda, fecha)
-        etiq = etiqueta(self.nombre, inst, True, "lista_restrictiva")
+        etiq = etiqueta(self.nombre, inst, True, "restricted_list")
         core.reservar([cuenta], fecha + timedelta(minutes=1))
 
         comercio = core.rng.choice(core.comercios)
