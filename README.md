@@ -133,3 +133,15 @@ Environment variables still override every path (see `.env.example`).
 - [`securepay-shared`](https://pypi.org/project/securepay-shared/): shared models, database and config
 - PostgreSQL with the seed loaded (**securepay-seed**)
 - Decision engine on `localhost:8000` when `GEN_OUTPUT=http`
+
+
+## Docker image (MAG-31)
+
+Build the Python 3.12/uv image from this repository root. It installs locked production dependencies and runs the transaction generator by default.
+
+```bash
+docker build -t securepay-generator .
+docker run --rm --env-file .env securepay-generator
+```
+
+For the complete local environment, use Docker Compose in the `SecurePay` repository; it configures `GEN_OUTPUT=http` and the decision-engine URL.
