@@ -133,3 +133,17 @@ Environment variables still override every path (see `.env.example`).
 - [`securepay-shared`](https://pypi.org/project/securepay-shared/): shared models, database and config
 - PostgreSQL with the seed loaded (**securepay-seed**)
 - Decision engine on `localhost:8000` when `GEN_OUTPUT=http`
+
+
+## Docker
+
+The Python 3.12 image with uv defaults to running the transaction generator:
+
+```bash
+docker build -t securepay-generator .
+```
+
+Provide `DATABASE_URL` for the seeded PostgreSQL database. For HTTP output,
+set `GEN_OUTPUT=http` and `GEN_ENGINE_URL` to an engine URL reachable from
+the container. Mount a writable volume at `/app/generated` to share event files
+with the partner-statements job.

@@ -79,3 +79,11 @@ Read these before changing the design, not to work on the code:
 - Data flow: https://securepay-riwi.github.io/SecurePay/docs/architecture/data-flow
 - Logbook: https://securepay-riwi.github.io/SecurePay/docs/logbook
 - This component: https://securepay-riwi.github.io/SecurePay/docs/components/generator
+
+
+## Docker image
+
+- The root `Dockerfile` runs `python -m securepay_generator` by default.
+- HTTP output must use an engine URL reachable from the container, not localhost.
+- Mount `/app/generated` as a shared writable volume when another service
+  consumes event files. Update README when runtime settings change.
