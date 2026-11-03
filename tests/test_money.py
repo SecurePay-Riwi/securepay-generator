@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 
 import pytest
@@ -38,7 +38,7 @@ _TASAS = Tasas(
 
 def test_cada_dia_usa_su_propia_tasa():
     assert _TASAS.del_dia("2026-10-02")["COP"] == Decimal("3310")
-    lunes = datetime(2026, 10, 5, 23, 59, tzinfo=timezone.utc)
+    lunes = datetime(2026, 10, 5, 23, 59, tzinfo=UTC)
     assert _TASAS.del_dia(lunes)["COP"] == Decimal("3350")
 
 

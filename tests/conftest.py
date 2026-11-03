@@ -10,18 +10,23 @@ import uuid
 from decimal import Decimal
 
 import pytest
+from securepay_shared.config import FECHA_REFERENCIA
 
 from securepay_generator.catalog import Catalogo, Cuenta
 from securepay_generator.core import Core
 from securepay_generator.defects import Defectos
 from securepay_generator.money import cargar_tasas, redondear
 from securepay_generator.patterns import CICLO
-from securepay_shared.config import FECHA_REFERENCIA
 
 NAMESPACE = uuid.UUID("12345678-1234-5678-1234-567812345678")
 
 # Cuántas cuentas de cada moneda y su saldo máximo.
-MONEDAS = {"COP": (40, 20_000_000), "USD": (20, 5_000), "EUR": (12, 5_000), "JPY": (8, 750_000)}
+MONEDAS = {
+    "COP": (40, 20_000_000),
+    "USD": (20, 5_000),
+    "EUR": (12, 5_000),
+    "JPY": (8, 750_000),
+}
 
 
 def catalogo_falso(en_lista=4, compartidas=6):
@@ -70,9 +75,16 @@ def generar(tasas):
     saldos de las cuentas.
     """
 
-    def _generar(cantidad=1_000, fraude=5, defectos=(0, 0, 0), semilla=42, con_tasas=None):
+    def _generar(
+        cantidad=1_000, fraude=5, defectos=(0, 0, 0), semilla=42, con_tasas=None
+    ):
         core = Core(
-            catalogo_falso(), con_tasas or tasas, cantidad, fraude, semilla, FECHA_REFERENCIA
+            catalogo_falso(),
+            con_tasas or tasas,
+            cantidad,
+            fraude,
+            semilla,
+            FECHA_REFERENCIA,
         )
         core.patrones = CICLO
         d = Defectos(semilla, *defectos)

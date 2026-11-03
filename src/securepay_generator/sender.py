@@ -74,7 +74,11 @@ class SalidaArchivo:
 
     def enviar(self, evento):
         # Una línea por evento, en el orden en que llegarían al motor.
-        linea = {"kind": evento.tipo, "endpoint": RUTAS[evento.tipo], "body": evento.payload}
+        linea = {
+            "kind": evento.tipo,
+            "endpoint": RUTAS[evento.tipo],
+            "body": evento.payload,
+        }
         self.archivo.write(json.dumps(linea, ensure_ascii=False) + "\n")
         return None
 
@@ -112,7 +116,9 @@ class Reporte:
             "defects": defectos,
         }
         ruta = self.carpeta / "generation_report.json"
-        ruta.write_text(json.dumps(resumen, indent=2, ensure_ascii=False), encoding="utf-8")
+        ruta.write_text(
+            json.dumps(resumen, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
         return resumen
 
 

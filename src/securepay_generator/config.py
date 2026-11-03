@@ -9,7 +9,6 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
-
 from securepay_shared.config import CANALES as _CANALES
 from securepay_shared.config import FECHA_REFERENCIA  # noqa: F401 (la usan los patrones)
 

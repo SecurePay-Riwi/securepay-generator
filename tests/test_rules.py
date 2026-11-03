@@ -28,7 +28,9 @@ def reglas_que_dispara(eventos, tasas, en_lista):
     for e in eventos:
         p = e.payload
         if e.tipo == "security":
-            seguridad[p["account_id"]].append((datetime.fromisoformat(p["event_date"]), p["type"]))
+            seguridad[p["account_id"]].append(
+                (datetime.fromisoformat(p["event_date"]), p["type"])
+            )
             resultado.append((e, set()))
             continue
 
@@ -42,14 +44,22 @@ def reglas_que_dispara(eventos, tasas, en_lista):
             salientes[origen].append((t, p["type"], usd))
 
             ventana = timedelta(minutes=R["velocity"]["minutos"])
-            p2p = [x for x, tipo, _ in salientes[origen] if tipo == "P2P" and t - x < ventana]
+            p2p = [
+                x
+                for x, tipo, _ in salientes[origen]
+                if tipo == "P2P" and t - x < ventana
+            ]
             if p["type"] == "P2P" and len(p2p) > R["velocity"]["transferencias"]:
                 reglas.add("velocity")
 
             if p["type"] == "RETIRO":
                 ventana = timedelta(minutes=R["mule"]["minutos"])
                 remitentes = {r for x, r in entrantes[origen] if t - x < ventana}
-                minimo = Decimal(R["mule"]["retiro_pct"]) / 100 * Decimal(p["source_balance_before"])
+                minimo = (
+                    Decimal(R["mule"]["retiro_pct"])
+                    / 100
+                    * Decimal(p["source_balance_before"])
+                )
                 if len(remitentes) >= R["mule"]["remitentes"] and monto >= minimo:
                     reglas.add("mule")
 
@@ -64,8 +74,13 @@ def reglas_que_dispara(eventos, tasas, en_lista):
                 reglas.add("splitting")
 
             ventana = timedelta(minutes=R["account_takeover"]["minutos"])
-            recientes = {tipo for x, tipo in seguridad[origen] if timedelta(0) <= t - x < ventana}
-            if usd > R["account_takeover"]["monto_usd"] and recientes >= {"DEVICE_CHANGE", "PASSWORD_CHANGE"}:
+            recientes = {
+                tipo for x, tipo in seguridad[origen] if timedelta(0) <= t - x < ventana
+            }
+            if usd > R["account_takeover"]["monto_usd"] and recientes >= {
+                "DEVICE_CHANGE",
+                "PASSWORD_CHANGE",
+            }:
                 reglas.add("account_takeover")
 
         if origen and destino:
@@ -78,7 +93,9 @@ def reglas_que_dispara(eventos, tasas, en_lista):
 
 
 @pytest.mark.parametrize("fraude", [5, 20])
-def test_cada_evento_dispara_solo_la_regla_de_su_etiqueta(generar, tasas, en_lista, fraude):
+def test_cada_evento_dispara_solo_la_regla_de_su_etiqueta(
+    generar, tasas, en_lista, fraude
+):
     eventos, _ = generar(cantidad=2_000, fraude=fraude)
 
     disparadas = Counter()
@@ -91,17 +108,30 @@ def test_cada_evento_dispara_solo_la_regla_de_su_etiqueta(generar, tasas, en_lis
         disparadas.update(reglas)
 
     # En 2.000 transacciones aparecen todos los patrones.
-    assert set(disparadas) == {"velocity", "mule", "splitting", "account_takeover", "restricted_list"}
+    assert set(disparadas) == {
+        "velocity",
+        "mule",
+        "splitting",
+        "account_takeover",
+        "restricted_list",
+    }
 
 
 def test_los_controles_existen_y_no_son_fraude(generar):
     eventos, _ = generar(cantidad=2_000)
-    controles = [e for e in eventos if (e.etiqueta["pattern"] or "").endswith("_CONTROL")]
+    controles = [
+        e for e in eventos if (e.etiqueta["pattern"] or "").endswith("_CONTROL")
+    ]
     nombres = {e.etiqueta["pattern"] for e in controles}
     assert nombres == {
-        "VELOCITY_CONTROL", "MULE_CONTROL", "SPLITTING_CONTROL", "ACCOUNT_TAKEOVER_CONTROL"
+        "VELOCITY_CONTROL",
+        "MULE_CONTROL",
+        "SPLITTING_CONTROL",
+        "ACCOUNT_TAKEOVER_CONTROL",
     }
-    assert not any(e.etiqueta["is_fraud"] or e.etiqueta["expected_rule"] for e in controles)
+    assert not any(
+        e.etiqueta["is_fraud"] or e.etiqueta["expected_rule"] for e in controles
+    )
 
 
 def tasas_que_cambian_cada_dia(dias=60):
@@ -111,7 +141,12 @@ def tasas_que_cambian_cada_dia(dias=60):
     fecha, el fraccionamiento (que pasa el límite por 2 % a 17 %) quedaría
     del lado equivocado del umbral.
     """
-    base = {"USD": Decimal(1), "COP": Decimal("3300"), "EUR": Decimal("0.88"), "JPY": Decimal("158")}
+    base = {
+        "USD": Decimal(1),
+        "COP": Decimal("3300"),
+        "EUR": Decimal("0.88"),
+        "JPY": Decimal("158"),
+    }
     por_fecha = {}
     inicio = datetime(2026, 10, 1)
     for i in range(dias):
@@ -129,8 +164,11 @@ def test_con_tasas_que_cambian_cada_dia_las_reglas_siguen_exactas(generar, en_li
     tasas = tasas_que_cambian_cada_dia()
     eventos, _ = generar(cantidad=2_000, fraude=20, con_tasas=tasas)
 
-    fechas = {datetime.fromisoformat(e.payload["transaction_date"]).date()
-              for e in eventos if e.tipo == "transaction"}
+    fechas = {
+        datetime.fromisoformat(e.payload["transaction_date"]).date()
+        for e in eventos
+        if e.tipo == "transaction"
+    }
     assert len(fechas) > 3  # la corrida cruza varios días y tasas
 
     for e, reglas in reglas_que_dispara(eventos, tasas, en_lista):

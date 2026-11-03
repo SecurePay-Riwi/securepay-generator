@@ -74,7 +74,9 @@ def descargar():
         encoding="utf-8",
     )
 
-    print(f"Tasas del {desde} al {contenido['hasta']} ({len(tasas)} días) guardadas en {TASAS_FILE}")
+    print(
+        f"Tasas del {desde} al {contenido['hasta']} ({len(tasas)} días) guardadas en {TASAS_FILE}"
+    )
 
 
 if __name__ == "__main__":

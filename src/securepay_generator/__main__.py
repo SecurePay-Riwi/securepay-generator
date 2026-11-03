@@ -8,14 +8,20 @@ En los dos modos queda generated/instance-N/events.jsonl, que es de donde
 leen los extractos de los socios.
 """
 
+from securepay_shared.db import engine
+
 from securepay_generator import config
 from securepay_generator.catalog import cargar
 from securepay_generator.core import Core
 from securepay_generator.defects import Defectos
 from securepay_generator.money import cargar_tasas
 from securepay_generator.patterns import CICLO
-from securepay_generator.sender import Reporte, SalidaArchivo, SalidaHttp, carpeta_de_salida
-from securepay_shared.db import engine
+from securepay_generator.sender import (
+    Reporte,
+    SalidaArchivo,
+    SalidaHttp,
+    carpeta_de_salida,
+)
 
 
 def main():
@@ -23,7 +29,9 @@ def main():
     volumen = config.VOLUMES[config.MODE]
     instancia = config.INSTANCE_INDEX
 
-    print(f"Modo: {config.MODE} · salida: {config.OUTPUT} · instancia {instancia + 1} de {config.INSTANCE_COUNT}")
+    print(
+        f"Modo: {config.MODE} · salida: {config.OUTPUT} · instancia {instancia + 1} de {config.INSTANCE_COUNT}"
+    )
     print("Cargando catálogo...")
     catalogo = cargar(
         engine,

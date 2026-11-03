@@ -68,7 +68,9 @@ def test_cada_tipo_lleva_solo_sus_cuentas(generar):
     for e in transacciones(eventos):
         p = e.payload
         origen, destino, comercio = (
-            p["source_account_id"], p["destination_account_id"], p["merchant_id"]
+            p["source_account_id"],
+            p["destination_account_id"],
+            p["merchant_id"],
         )
         if p["type"] == "RECARGA":
             assert destino and not origen and not comercio
@@ -89,7 +91,14 @@ def test_los_montos_respetan_los_decimales_de_su_moneda(generar):
 
 def test_las_etiquetas_no_viajan_al_motor(generar):
     eventos, _ = generar(defectos=(2, 2, 1))
-    prohibidas = {"pattern", "pattern_id", "is_fraud", "expected_rule", "defects", "duplicate"}
+    prohibidas = {
+        "pattern",
+        "pattern_id",
+        "is_fraud",
+        "expected_rule",
+        "defects",
+        "duplicate",
+    }
     for e in eventos:
         assert not prohibidas & set(e.payload)
 
