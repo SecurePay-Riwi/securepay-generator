@@ -92,6 +92,19 @@ uv run pytest
 
 The full list is in `.env.example`.
 
+## CI
+
+Every pull request to `main` runs `.github/workflows/ci.yml`, the same
+checks as SecurePay without the deploy: `lint` (ruff check and format),
+`secret-scan` (gitleaks over the whole history) and `tests` (pytest,
+without PostgreSQL or LocalStack). Run them locally before pushing:
+
+```bash
+uv run ruff format .
+uv run ruff check .
+uv run pytest
+```
+
 ## Repository layout
 
 ```
