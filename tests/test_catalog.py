@@ -9,7 +9,14 @@ Fila = namedtuple("Fila", "id user_id moneda saldo en_lista compartida")
 
 def filas(n):
     return [
-        Fila(uuid.UUID(int=i), uuid.UUID(int=10_000 + i), "JPY", Decimal("500.00"), False, False)
+        Fila(
+            uuid.UUID(int=i),
+            uuid.UUID(int=10_000 + i),
+            "JPY",
+            Decimal("500.00"),
+            False,
+            False,
+        )
         for i in range(n)
     ]
 

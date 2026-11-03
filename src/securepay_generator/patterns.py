@@ -37,7 +37,9 @@ def elegir_varias(core, cuentas, n, excluir=(), saldo_min_usd=0):
 def usd(core, minimo, maximo, moneda, fecha):
     """Monto al azar entre dos valores en USD, ya en la moneda de la cuenta,
     con la tasa del día en que se hará la transacción."""
-    return desde_usd(core.rng.uniform(minimo, maximo), moneda, core.tasas.del_dia(fecha))
+    return desde_usd(
+        core.rng.uniform(minimo, maximo), moneda, core.tasas.del_dia(fecha)
+    )
 
 
 class Velocidad:
@@ -57,7 +59,9 @@ class Velocidad:
         origen = core.elegir(core.normales)
         if origen is None:
             return 0
-        destinos = elegir_varias(core, core.por_moneda[origen.moneda], n, excluir=(origen,))
+        destinos = elegir_varias(
+            core, core.por_moneda[origen.moneda], n, excluir=(origen,)
+        )
         if destinos is None:
             return 0
 
@@ -81,19 +85,28 @@ class Velocidad:
             core.agendar(
                 recarga_en,
                 lambda fecha: core.transaccion(
-                    "RECARGA", recarga, fecha, destino=origen,
+                    "RECARGA",
+                    recarga,
+                    fecha,
+                    destino=origen,
                     etiq=etiqueta(nombre, inst, fraude),
                 ),
             )
             agendadas += 1
 
-        for i, (destino, monto, fecha_tx) in enumerate(zip(destinos, montos, fechas)):
+        for i, (destino, monto, fecha_tx) in enumerate(
+            zip(destinos, montos, fechas, strict=False)
+        ):
             # La transferencia que pasa el umbral es la que dispara la regla.
             dispara = fraude and i == n - 1
             core.agendar(
                 fecha_tx,
                 lambda fecha, d=destino, m=monto, x=dispara: core.transaccion(
-                    "P2P", m, fecha, origen=origen, destino=d,
+                    "P2P",
+                    m,
+                    fecha,
+                    origen=origen,
+                    destino=d,
                     etiq=etiqueta(nombre, inst, fraude, "velocity" if x else None),
                 ),
             )
@@ -139,7 +152,11 @@ class Mula:
             core.agendar(
                 inicio + timedelta(minutes=2 + 4 * i),
                 lambda fecha, r=remitente, m=monto: core.transaccion(
-                    "P2P", m, fecha, origen=r, destino=mula,
+                    "P2P",
+                    m,
+                    fecha,
+                    origen=r,
+                    destino=mula,
                     etiq=etiqueta(nombre, inst, fraude),
                 ),
             )
@@ -150,7 +167,9 @@ class Mula:
         core.agendar(
             inicio + timedelta(minutes=20),
             lambda fecha: core.transaccion(
-                "RETIRO", redondear(mula.saldo * retiro_pct, mula.moneda), fecha,
+                "RETIRO",
+                redondear(mula.saldo * retiro_pct, mula.moneda),
+                fecha,
                 origen=mula,
                 etiq=etiqueta(nombre, inst, fraude, "mule" if fraude else None),
             ),
@@ -179,7 +198,9 @@ class Fraccionamiento:
         n = self.regla["transacciones"]
         # Rangos pensados para que, con cualquier redondeo, el fraude siempre
         # pase el límite y el control nunca lo alcance.
-        rango = (0.34 * limite, 0.39 * limite) if fraude else (0.20 * limite, 0.30 * limite)
+        rango = (
+            (0.34 * limite, 0.39 * limite) if fraude else (0.20 * limite, 0.30 * limite)
+        )
 
         inst = core.nueva_instancia(self.nombre)
         nombre = self.nombre if fraude else f"{self.nombre}_CONTROL"
@@ -198,17 +219,23 @@ class Fraccionamiento:
         core.agendar(
             inicio,
             lambda fecha: core.transaccion(
-                "RECARGA", recarga, fecha, destino=cuenta,
+                "RECARGA",
+                recarga,
+                fecha,
+                destino=cuenta,
                 etiq=etiqueta(nombre, inst, fraude),
             ),
         )
 
-        for i, (fecha_tx, monto) in enumerate(zip(fechas, montos)):
+        for i, (fecha_tx, monto) in enumerate(zip(fechas, montos, strict=False)):
             dispara = fraude and i == n - 1
             core.agendar(
                 fecha_tx,
                 lambda fecha, m=monto, x=dispara: core.transaccion(
-                    "RETIRO", m, fecha, origen=cuenta,
+                    "RETIRO",
+                    m,
+                    fecha,
+                    origen=cuenta,
                     etiq=etiqueta(nombre, inst, fraude, "splitting" if x else None),
                 ),
             )
@@ -251,7 +278,10 @@ class TomaCuenta:
             core.agendar(
                 inicio,
                 lambda fecha: core.transaccion(
-                    "RECARGA", recarga, fecha, destino=cuenta,
+                    "RECARGA",
+                    recarga,
+                    fecha,
+                    destino=cuenta,
                     etiq=etiqueta(nombre, inst, fraude),
                 ),
             )
@@ -275,8 +305,14 @@ class TomaCuenta:
         core.agendar(
             cambio + espera,
             lambda fecha: core.transaccion(
-                "RETIRO", monto, fecha, origen=cuenta, dispositivo=nuevo,
-                etiq=etiqueta(nombre, inst, fraude, "account_takeover" if fraude else None),
+                "RETIRO",
+                monto,
+                fecha,
+                origen=cuenta,
+                dispositivo=nuevo,
+                etiq=etiqueta(
+                    nombre, inst, fraude, "account_takeover" if fraude else None
+                ),
             ),
         )
         return agendadas + 1

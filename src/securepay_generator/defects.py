@@ -76,7 +76,9 @@ class Defectos:
             if self._toca(self.desorden_pct):
                 # Llega entre 1 y 10 eventos más tarde, con su fecha original.
                 saltos = self.rng.randint(1, 10)
-                evento = self._anotar("OUT_OF_ORDER", evento, f"llega {saltos} eventos tarde")
+                evento = self._anotar(
+                    "OUT_OF_ORDER", evento, f"llega {saltos} eventos tarde"
+                )
                 retener(enviados + saltos, evento)
             else:
                 yield evento
@@ -86,7 +88,9 @@ class Defectos:
                     # El core reintenta: mismo payload, mismo id.
                     saltos = self.rng.randint(0, 3)
                     copia = self._anotar(
-                        "DUPLICATE", evento, f"reenviada {saltos} eventos después",
+                        "DUPLICATE",
+                        evento,
+                        f"reenviada {saltos} eventos después",
                         duplicate=True,
                     )
                     retener(enviados + saltos, copia)

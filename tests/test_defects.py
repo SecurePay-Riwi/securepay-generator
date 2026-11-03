@@ -6,7 +6,9 @@ DEFECTOS = (2, 2, 1)
 
 
 def fecha(e):
-    return datetime.fromisoformat(e.payload.get("transaction_date") or e.payload["event_date"])
+    return datetime.fromisoformat(
+        e.payload.get("transaction_date") or e.payload["event_date"]
+    )
 
 
 def test_sin_defectos_el_stream_no_cambia(generar):
@@ -51,7 +53,9 @@ def test_un_reenvio_es_identico_al_original(generar):
     reenvios = [v for v in por_id.values() if len(v) > 1]
     assert reenvios
     for original, copia in reenvios:
-        assert copia.etiqueta.get("duplicate") and not original.etiqueta.get("duplicate")
+        assert copia.etiqueta.get("duplicate") and not original.etiqueta.get(
+            "duplicate"
+        )
         assert copia.payload == original.payload
 
 
@@ -64,7 +68,9 @@ def test_un_evento_desordenado_llega_despues_de_uno_mas_reciente(generar):
 
 def test_precision_agrega_decimales_sin_cambiar_el_valor(generar):
     eventos, _ = generar(cantidad=2_000, defectos=DEFECTOS)
-    con_defecto = [e for e in eventos if "DECIMAL_PRECISION" in e.etiqueta.get("defects", [])]
+    con_defecto = [
+        e for e in eventos if "DECIMAL_PRECISION" in e.etiqueta.get("defects", [])
+    ]
     assert con_defecto
     for e in con_defecto:
         decimales = -Decimal(e.payload["amount"]).as_tuple().exponent

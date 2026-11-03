@@ -4,8 +4,9 @@ import json
 from bisect import bisect_right
 from decimal import ROUND_HALF_UP, Decimal
 
-from securepay_generator.config import TASAS_FILE
 from securepay_shared.config import MONEDA_DECIMALES
+
+from securepay_generator.config import TASAS_FILE
 
 
 class Tasas:

@@ -200,7 +200,9 @@ class Core:
             raise RuntimeError("No hay cuentas libres para el tráfico normal")
 
         monto = desde_usd(
-            self.rng.uniform(config.MONTO_NORMAL_USD["min"], config.MONTO_NORMAL_USD["max"]),
+            self.rng.uniform(
+                config.MONTO_NORMAL_USD["min"], config.MONTO_NORMAL_USD["max"]
+            ),
             cuenta.moneda,
             self.tasas.del_dia(self.reloj),
         )
@@ -273,7 +275,9 @@ class Core:
 
     def eventos(self):
         """Entrega los eventos en orden de fecha hasta llegar a la cantidad."""
-        proxima = self.reloj + timedelta(seconds=self.rng.expovariate(1 / self.segundos_entre))
+        proxima = self.reloj + timedelta(
+            seconds=self.rng.expovariate(1 / self.segundos_entre)
+        )
 
         while True:
             self._iniciar_patrones()
